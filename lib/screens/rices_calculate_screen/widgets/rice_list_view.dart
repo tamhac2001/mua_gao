@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mua_gao/providers/rices.dart';
 import 'package:provider/provider.dart';
 
 class RiceListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final riceData = Provider.of<Rices>(context, listen: false);
+    final riceData = Rices();
     for (Rice rice in riceData.riceListSortByValue) {
       print('In list:' + rice.id + ':' + rice.quantity.toString());
     }
     final riceCouldBuyData = Provider.of<RicesCouldBuy>(context);
 
     if (riceCouldBuyData.moneyWantToSpend > 0) {
-      riceCouldBuyData.updateRiceCouldBuy();
-      final riceCouldBuyMap = riceCouldBuyData.riceCouldBuy;
-      return Expanded(
-        child: ListView.builder(
-          itemCount: riceCouldBuyMap.length,
+      print(riceCouldBuyData.riceCouldBuy.length);
+      return Flexible(
+        child: ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          separatorBuilder: (BuildContext context, int index) => const SizedBox(height: 8.0,),
+          itemCount: riceCouldBuyData.riceCouldBuy.length,
           itemBuilder: (context, index) => Dismissible(
             key: UniqueKey(),
             direction: DismissDirection.endToStart,
@@ -30,35 +33,32 @@ class RiceListView extends StatelessWidget {
               ),
             ),
             onDismissed: (direction) {
-              riceCouldBuyMap.remove(riceCouldBuyMap.keys.elementAt(index));
+              riceCouldBuyData.remove(riceCouldBuyData.riceCouldBuy.keys.elementAt(index));
             },
             child: Card(
+              shadowColor: null,
               child: ExpansionTile(
                 initiallyExpanded: true,
                 expandedAlignment: Alignment.centerLeft,
                 expandedCrossAxisAlignment: CrossAxisAlignment.start,
                 childrenPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 leading: CircleAvatar(
-                  backgroundImage: NetworkImage(riceData.findById(riceCouldBuyMap.keys.elementAt(index)).imageUrl),
+                  backgroundImage:
+                      NetworkImage(riceData.findById(riceCouldBuyData.riceCouldBuy.keys.elementAt(index)).imageUrl),
                 ),
-                title: Text(riceData.findById(riceCouldBuyMap.keys.elementAt(index)).title),
-                // subtitle:
+                title: Text(riceData.findById(riceCouldBuyData.riceCouldBuy.keys.elementAt(index)).title),
+                // subtitle: Text('Số lượng mua: ' + riceCouldBuyData.riceCouldBuy.values.elementAt(index).toString() + ' bịch'),
                 trailing: Chip(
                   backgroundColor: Theme.of(context).primaryColor,
                   label: Text(
-                    (riceData.findById(riceCouldBuyMap.keys.elementAt(index)).price *
-                                riceData.findById(riceCouldBuyMap.keys.elementAt(index)).quantity)
-                            .toString() +
-                        '00 đ',
+                    formattedMoneyForDisplay((riceCouldBuyData.getMoneyToBuyRice(index))),
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
                 children: [
-                  Text('Đơn giá: ' + riceCouldBuyData.getRiceByIndex(index).price.toString() + '000 đ'),
-                  Text('Số hàng trong kho: ' +
-                      riceData.findById(riceCouldBuyMap.keys.elementAt(index)).quantity.toString() +
-                      ' bịch'),
-                  Text('Số lượng mua: ' + riceCouldBuyMap.values.elementAt(index).toString() + ' bịch'),
+                  Text('Đơn giá: ' + formattedMoneyForDisplay(riceCouldBuyData.getRiceByIndex(index).price)),
+                  Text('Số hàng trong kho: ' + riceCouldBuyData.getRiceByIndex(index).quantity.toString() + ' bịch'),
+                  Text('Số lượng mua: ' + riceCouldBuyData.riceCouldBuy.values.elementAt(index).toString() + ' bịch'),
                   Text('Tổng khối lượng: ' + riceCouldBuyData.getTotalWeightOfRice(index).toString() + ' kg')
                 ],
               ),
@@ -69,4 +69,9 @@ class RiceListView extends StatelessWidget {
     } else
       return Container();
   }
+}
+
+String formattedMoneyForDisplay(int money) {
+  final numberFormat = NumberFormat('###,###');
+  return numberFormat.format(money).replaceAll(',', '.') + '.000 đ';
 }

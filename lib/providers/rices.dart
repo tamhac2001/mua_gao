@@ -8,10 +8,11 @@ import 'package:mua_gao/models/types_of_rice.dart';
 class Rice with ChangeNotifier {
   static final typesOfRice = TypesOfRice();
 
+
   late final String id;
   final String title;
   final String typeId;
-  final double price;
+  final int price;
   final int weight;
   late int quantity;
   final String description;
@@ -28,7 +29,7 @@ class Rice with ChangeNotifier {
   }) {
     typesOfRice.increaseNumberOfRice(typeId);
     this.id = typeId + 'R' + typesOfRice.numberOfRice(typeId).toString();
-    this.value = price / weight;
+    this.value = price.toDouble() / weight;
     this.quantity = Random().nextInt(5);
     // this.quantity = 3;
   }
@@ -124,9 +125,9 @@ class RicesCouldBuy with ChangeNotifier {
   Rices ricesData = Rices();
   List<Rice> riceListSorted = Rices().riceListSortByValue;
 
-  double _moneyWantToSpend = 0.0;
-  double get moneyWantToSpend{
-    return _moneyWantToSpend.toDouble();
+  int _moneyWantToSpend = 0;
+  int get moneyWantToSpend{
+    return _moneyWantToSpend.toInt();
   }
 
   Map<String, int> _riceCouldBuy = {};
@@ -137,11 +138,12 @@ class RicesCouldBuy with ChangeNotifier {
 
   void addRice(String riceId, int quantity) {
     _riceCouldBuy.putIfAbsent(riceId, () => quantity);
+    // notifyListeners();
   }
 
-  void updateRiceCouldBuy() {
+  void _updateRiceCouldBuy() {
     if(riceCouldBuy.isNotEmpty) clear();
-    double totalMoney = moneyWantToSpend;
+    int totalMoney = moneyWantToSpend;
     for (Rice rice in riceListSorted) {
       int counter = 0;
       while (counter < rice.quantity && totalMoney > rice.price) {
@@ -150,16 +152,18 @@ class RicesCouldBuy with ChangeNotifier {
       }
       if (counter > 0) addRice(rice.id, counter);
     }
+    // notifyListeners();
 
   }
 
-  void updateMoneyWantToSpend(double money){
+  void updateMoneyWantToSpend(int money){
     _moneyWantToSpend = money;
+    _updateRiceCouldBuy();
     notifyListeners();
   }
 
   void remove(String key) {
-    _riceCouldBuy.remove(key);
+    print(_riceCouldBuy.remove(key));
     notifyListeners();
   }
 
@@ -172,6 +176,10 @@ class RicesCouldBuy with ChangeNotifier {
     return ricesData.findById(riceCouldBuy.keys.elementAt(index));
   }
 
+
+  int getMoneyToBuyRice(int index){
+    return getRiceByIndex(index).price*(riceCouldBuy.values.elementAt(index));
+  }
 
   // int? getQuantityCouldBuy(String key) {
   //   return riceCouldBuy[key];
@@ -197,12 +205,12 @@ class RicesCouldBuy with ChangeNotifier {
     return total;
   }
 
-  double getTotalMoneySpend(){
-    double total = 0.0;
+  int getTotalMoneySpend(){
+    int total = 0;
     riceCouldBuy.forEach((key, quantity) {
       total += ricesData.findById(key).price * quantity;
     });
-    notifyListeners();
+    // notifyListeners();
     return total;
 
   }
