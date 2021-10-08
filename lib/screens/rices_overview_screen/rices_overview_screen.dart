@@ -13,16 +13,18 @@ class RicesOverviewScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final rices = Provider.of<Rices>(context);
 
-    return Scaffold(
-      appBar: buildBaseAppBar(),
-      body: GridView.builder(
-        gridDelegate:
-            SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-        itemCount: rices.riceListSortByValue.length,
-        itemBuilder: (context, index) => ChangeNotifierProvider.value(
-            value: rices.riceListSortByValue[index], child: RiceGridTile()),
+    return SafeArea(
+      child: Scaffold(
+        appBar: buildBaseAppBar(context: context,title: 'Danh sách gạo'),
+        body: GridView.builder(
+          gridDelegate:
+              SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+          itemCount: rices.riceListSortByValue.length,
+          itemBuilder: (context, index) => ChangeNotifierProvider.value(
+              value: rices.riceListSortByValue[index], child: RiceGridTile()),
+        ),
+        bottomNavigationBar: BottomNav(routeName),
       ),
-      bottomNavigationBar: BottomNav(routeName),
     );
   }
 }

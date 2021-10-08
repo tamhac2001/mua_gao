@@ -21,21 +21,31 @@ class TypesOfRice {
   TypesOfRice._internal();
 
   List<TypeOfRice> _types = [
-    TypeOfRice(id: 'T1', title: 'Gao mem'),
+    TypeOfRice(id: 'T1', title: 'Gạo mềm'),
   ];
 
   List<TypeOfRice> get types {
     return [..._types];
   }
 
+  TypeOfRice findById(String id){
+    return _types.firstWhere((type) => type.id==id);
+  }
+
   void increaseNumberOfRice(String id){
-    _types.firstWhere((type) => type.id==id).increaseNumberOfRice();
+    findById(id).increaseNumberOfRice();
 
   }
 
   int numberOfRice(String id){
-    return _types.firstWhere((type) => type.id==id).numberOfRice;
+    return findById(id).numberOfRice;
   }
+
+  String getTitle(String id){
+    return findById(id).title;
+  }
+
+
 
 }
 

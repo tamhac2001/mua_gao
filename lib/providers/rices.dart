@@ -169,6 +169,7 @@ class RicesCouldBuy with ChangeNotifier {
 
   void clear() {
     _riceCouldBuy = {};
+    _moneyWantToSpend = 0;
     notifyListeners();
   }
 
