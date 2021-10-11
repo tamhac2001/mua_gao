@@ -23,8 +23,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  provider:
+#  provider:
   intl:
+  flutter_riverpod:
   #ui
   badges:
   fluttertoast:

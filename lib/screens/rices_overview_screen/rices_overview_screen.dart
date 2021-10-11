@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mua_gao/providers/rices.dart';
 import 'package:mua_gao/screens/rice_detail_screen/rice_detail_screen.dart';
 import 'package:mua_gao/screens/widgets/base_app_bar.dart';
 import 'package:mua_gao/screens/widgets/bottom_nav.dart';
-import 'package:provider/provider.dart';
 
-class RicesOverviewScreen extends StatelessWidget {
+class RiceOverviewScreen extends StatelessWidget {
   static final routeName = '/';
 
   @override
   Widget build(BuildContext context) {
-    final rices = Provider.of<Rices>(context);
-
     return SafeArea(
       child: Scaffold(
-        appBar: buildBaseAppBar(context: context,title: 'Danh sách gạo'),
-        body: GridView.builder(
-          gridDelegate:
-              SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-          itemCount: rices.riceListSortByValue.length,
-          itemBuilder: (context, index) => ChangeNotifierProvider.value(
-              value: rices.riceListSortByValue[index], child: RiceGridTile()),
+        appBar: buildBaseAppBar(context: context, title: 'Danh sách gạo'),
+        body: Consumer(
+          builder: (context, watch, child) {
+            final ricesList = watch(ricesListProvider);
+            return GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+              itemCount: ricesList.length,
+              itemBuilder: (context, index) => RiceGridTile(index),
+            );
+          },
         ),
         bottomNavigationBar: BottomNav(routeName),
       ),
@@ -29,15 +29,17 @@ class RicesOverviewScreen extends StatelessWidget {
   }
 }
 
-class RiceGridTile extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final rice = Provider.of<Rice>(context);
+class RiceGridTile extends ConsumerWidget {
+  final riceIndex;
 
+  RiceGridTile(this.riceIndex);
+
+  @override
+  Widget build(BuildContext context, ScopedReader watch) {
+    final rice = watch(ricesListProvider).elementAt(riceIndex);
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, RiceDetailScreen.routeName,
-            arguments: rice.id);
+        Navigator.pushNamed(context, RiceDetailScreen.routeName, arguments: rice.id);
       },
       child: GridTile(
         child: Column(
