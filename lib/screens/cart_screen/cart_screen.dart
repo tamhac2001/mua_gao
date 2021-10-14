@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:mua_gao/providers/Cart.dart';
+import 'package:mua_gao/providers/cart.dart';
 import 'package:mua_gao/providers/rices.dart';
-import 'package:mua_gao/screens/widgets/rice_list_view.dart';
-import 'package:provider/provider.dart';
 
-class CartScreen extends StatelessWidget {
+
+class CartScreen extends ConsumerWidget {
   static final String routeName = '/cart';
-  final ricesData = Rices();
+
 
   @override
-  Widget build(BuildContext context) {
-    final _cartData = Provider.of<Cart>(context);
+  Widget build(BuildContext context,WidgetRef ref) {
+    // final _ricesData = Rices();
+    final _cartData =  ref.watch(cartProvider);
     return SafeArea(
         child: Scaffold(
       appBar: AppBar(
@@ -22,8 +23,8 @@ class CartScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              ..._cartData.items.entries.map((item) {
-                final currentRice = ricesData.findById(item.key);
+              ..._cartData.entries.map((item) {
+                final currentRice = ref.read(riceByIdProvider(item.key));
                 return Card(
                   child: ExpansionTile(
                     // initiallyExpanded: true,
@@ -43,7 +44,6 @@ class CartScreen extends StatelessWidget {
                     children: [
                       Text('Đơn giá: ' + formattedPriceForDisplay(item.value.price)),
                       Text('Số lượng mua: ' + item.value.quantity.toString() + ' bịch'),
-
                     ],
                   ),
                 );

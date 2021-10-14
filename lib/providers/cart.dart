@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:mua_gao/providers/rices.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CartItem with ChangeNotifier {
+class CartItem {
   final String id;
   final String title;
   int quantity;
@@ -14,20 +13,19 @@ class CartItem with ChangeNotifier {
     required this.price,
   });
 
-  int getTotalPrice(){
-    return this.price*this.quantity;
+  int getTotalPrice() {
+    return this.price * this.quantity;
   }
 }
 
-class Cart with ChangeNotifier {
-  Map<String, CartItem> _items = {};
 
-  Map<String, CartItem> get items {
-    return {..._items};
-  }
+final cartProvider = StateNotifierProvider<Cart, Map<String, CartItem>>((ref) => Cart());
+
+class Cart extends StateNotifier<Map<String, CartItem>> {
+  Cart() : super({});
 
   void addItem(String riceId, String title, int price, int quantity) {
-    _items.update(
+    state.update(
       riceId,
       (currentItem) => CartItem(
           id: currentItem.id,
@@ -39,12 +37,10 @@ class Cart with ChangeNotifier {
   }
 
   void remove(String riceId) {
-    _items.removeWhere((key, value) => key==riceId);
-    notifyListeners();
+    state.removeWhere((key, value) => key == riceId);
   }
 
-  void clear(){
-    _items = {};
-    notifyListeners();
+  void clear() {
+    state = {};
   }
 }

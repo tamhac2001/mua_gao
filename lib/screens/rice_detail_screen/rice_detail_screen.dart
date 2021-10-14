@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:mua_gao/models/types_of_rice.dart';
+import 'package:mua_gao/providers/types_of_rice.dart';
 import 'package:mua_gao/providers/rices.dart';
-import 'package:mua_gao/screens/widgets/base_app_bar.dart';
-import 'package:provider/provider.dart';
 
-class RiceDetailScreen extends StatelessWidget {
+import 'package:mua_gao/screens/widgets/base_app_bar.dart';
+
+class RiceDetailScreen extends ConsumerWidget {
   static final String routeName = '/rice_detail';
   final String bullet = "\u2022 ";
-  final typeOfRiceData = TypesOfRice();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,WidgetRef ref) {
     final riceId = ModalRoute.of(context)!.settings.arguments as String;
-    final currentRice = Rices().findById(riceId);
+    final currentRice = ref.watch(riceByIdProvider(riceId));
+    final typeOfRice = ref.watch(typeOfRiceByTypeIdProvider(currentRice.typeId));
     return SafeArea(
       child: Scaffold(
         appBar: buildBaseAppBar(context: context,title:  currentRice.title),
@@ -45,7 +46,7 @@ class RiceDetailScreen extends StatelessWidget {
                 height: 16.0,
               ),
               Text(
-                'Loại gạo: '+typeOfRiceData.getTitle(currentRice.typeId),
+                'Loại gạo: '+typeOfRice.title,
                 style: Theme.of(context).textTheme.bodyText2
               ),
               SizedBox(

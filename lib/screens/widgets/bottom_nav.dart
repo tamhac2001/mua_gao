@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mua_gao/screens/rices_calculate_screen/rices_calculate_screen.dart';
 import 'package:mua_gao/screens/rices_overview_screen/rices_overview_screen.dart';
 
@@ -34,7 +33,7 @@ class _BottomNavState extends State<BottomNav> {
           if (value != _currentIndex) {
             if (value == 0)
               Navigator.pushReplacementNamed(
-                  context, RicesOverviewScreen.routeName);
+                  context, RiceOverviewScreen.routeName);
             else
               Navigator.pushReplacementNamed(
                   context, RicesCalculateScreen.routeName);

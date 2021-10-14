@@ -14,8 +14,8 @@ class RiceOverviewScreen extends StatelessWidget {
       child: Scaffold(
         appBar: buildBaseAppBar(context: context, title: 'Danh sách gạo'),
         body: Consumer(
-          builder: (context, watch, child) {
-            final ricesList = watch(ricesListProvider);
+          builder: (context, ref, child)  {
+            final ricesList = ref.watch(ricesListProvider);
             return GridView.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
               itemCount: ricesList.length,
@@ -35,8 +35,8 @@ class RiceGridTile extends ConsumerWidget {
   RiceGridTile(this.riceIndex);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final rice = watch(ricesListProvider).elementAt(riceIndex);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final rice = ref.watch(riceByIndexProvider(riceIndex));
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, RiceDetailScreen.routeName, arguments: rice.id);

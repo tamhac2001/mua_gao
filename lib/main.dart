@@ -5,19 +5,15 @@ import 'package:mua_gao/screens/rice_detail_screen/rice_detail_screen.dart';
 import 'package:mua_gao/screens/rices_calculate_screen/rices_calculate_screen.dart';
 import 'package:mua_gao/screens/rices_overview_screen/rices_overview_screen.dart';
 
+final providerContainer = ProviderContainer();
 void main() {
-  runApp(ProviderScope(child: MyApp()));
+
+  runApp(UncontrolledProviderScope(container: providerContainer,child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // return MultiProvider(
-    //   providers: [
-    //     ChangeNotifierProvider(create: (context) => Rices(),),
-    //     ChangeNotifierProvider(create: (context) => RicesCouldBuy(),),
-    //     ChangeNotifierProvider(create: (context) => Cart(),)
-    //   ],
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'App mua gao',
