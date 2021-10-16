@@ -8,7 +8,7 @@ import 'package:mua_gao/screens/rices_overview_screen/rices_overview_screen.dart
 final providerContainer = ProviderContainer();
 void main() {
 
-  runApp(UncontrolledProviderScope(container: providerContainer,child: MyApp()));
+  runApp(ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

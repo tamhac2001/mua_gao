@@ -22,7 +22,6 @@ class Rice {
     required this.description,
     required this.imageUrl,
   }) {
-    // providerContainer.refresh(typesOfRiceListProvider.notifier).increaseNumberOfRice(typeId);
     this.id =  'R' + RicesList.totalRice.toString();
     RicesList.totalRice++;
     this.value = price.toDouble() / weight;
